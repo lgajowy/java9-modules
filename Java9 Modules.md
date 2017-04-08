@@ -6,16 +6,20 @@
 
 ## 0. Modules? What are we talking about?
 
-If this is your first post about Jigsaw, you may be unaware of the concept of modularity. In general modularity refers to... 
+If this is your first post about Jigsaw, you may be unaware of the concept of modularity. In general modularity refers to 
 
 
 ## 1. Breaking The Monolith
-- how big is java? How much apis does it incorporate?
-- how does it look after splitting to modules?
-- what does it bring us?
+
+- what structure has java right now? 
+- what structure will it have after splitting
+- lack of clarity on dependencies
+- public is too open
+
 
 ## 2. Tailor-made runtime (size)
 (show how to use jlink to create your own runtime)
+- large jars, large rt.jar
 
 ## 3. Writing modular code
 (show module creation etc)
