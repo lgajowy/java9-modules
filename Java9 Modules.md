@@ -8,8 +8,10 @@
 
 If this is your first post about Jigsaw, you may be unaware of the concept of modularity. In general modularity refers to 
 
+## 1. Writing modular code
+For me, the easiest way to learn something is to see it in action... (I jedziesz z modułami na początek)
 
-## 1. Breaking The Monolith
+## 2. Breaking The Monolith
 
 - what structure has java right now? 
 - what structure will it have after splitting
@@ -21,7 +23,7 @@ If this is your first post about Jigsaw, you may be unaware of the concept of mo
 (show how to use jlink to create your own runtime)
 - large jars, large rt.jar
 
-## 3. Writing modular code
+
 (show module creation etc)
 
 ## 4. Increased security and performance
