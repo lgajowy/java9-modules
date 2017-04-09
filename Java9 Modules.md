@@ -31,7 +31,22 @@ The modules are fully independent and isolated from each other. Each one has it'
 
 ## Getting modular
 
-If Java itself is modular and there are means to make our own code modular then we should do it right now. Let's explain the basics on a simple java application:
+If Java itself is modular and there are means to make our own code modular then we should do it right now. Let's explain the basics on a simple java application. 
+
+
+What we're going to build is a simple application made of two modules:
+	
+1. com.timeteller.clock 
+2. com.timeteller.main
+
+Project structure:
+
+![project structure](ProjectStructure.png "Demo project structure") 
+
+
+
+
+
 
 - java.base is allways there
 - module has a name
@@ -43,14 +58,6 @@ If Java itself is modular and there are means to make our own code modular then 
 	If something is exported that does not mean that you can use it. You have to require it.
 
 
-
-
-```
-
-
-javac -d mods/com.lukasz.clock com.lukasz.clock/com/lukasz/clock/SpeakingClock.java 
-
-```
 
 
 

@@ -7,25 +7,25 @@ Directory for jars:
 Making the clock.jar:
 
 ```
-$ mkdir -p build/classes/com.lukasz.clock/
-$ javac -d build/classes/com.lukasz.clock/ com.lukasz.clock/module-info.java com.lukasz.clock/com/lukasz/clock/SpeakingClock.java
-$ jar -c -f jars/clock.jar -C build/classes/com.lukasz.clock/ .
+$ mkdir -p build/classes/com.timeteller.clock/
+$ javac -d build/classes/com.timeteller.clock/ com.timeteller.clock/module-info.java com.timeteller.clock/com/timeteller/clock/SpeakingClock.java
+$ jar -c -f jars/clock.jar -C build/classes/com.timeteller.clock/ .
 
 ```
 
 Making the timeTeller.jar:
 
-```
-$ mkdir -p build/classes/com.lukasz.main
-$ javac -d build/classes/com.lukasz.main/ --module-path=jars com.lukasz.main/module-info.java com.lukasz.main/com/lukasz/main/Main.java
-$ jar -c -f jars/timeTeller.jar --main-class com.lukasz.main.Main -c build/classes/com.lukasz.main .
+```timeteller
+$ mkdir -p build/classes/com.timeteller.main
+$ javac -d build/classes/com.timeteller.main/ --module-path=jars com.timeteller.main/module-info.java com.timeteller.main/com/timeteller/main/Main.java
+$ jar -c -f jars/timeTeller.jar --main-class com.timeteller.main.Main -c build/classes/com.timeteller.main .
 
 ```
 
 Running the jar:
 
 ```
-$ java -p jars -m com.lukasz.main
+$ java -p jars -m com.timeteller.main
 
 ```
 

@@ -1,4 +1,4 @@
-package com.lukasz.clock;
+package com.timeteller.clock;
 
 import java.util.*;
 

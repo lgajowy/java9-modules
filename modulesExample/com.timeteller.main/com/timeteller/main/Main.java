@@ -1,6 +1,6 @@
-package com.lukasz.main;
+package com.timeteller.main;
 
-import com.lukasz.clock.SpeakingClock;
+import com.timeteller.clock.SpeakingClock;
 
 public class Main {
 
