@@ -21,54 +21,75 @@ This job was a tough one. After the decision about defering Project Jigsaw from 
 
 >There are two main reasons. The first is that the JDK code base is deeply interconnected at both the API and the implementation levels, having been built over many years primarily in the style of a monolithic software system. We’ve spent considerable effort eliminating or at least simplifying as many API and implementation dependences as possible, so that both the Platform and its implementations can be presented as a coherent set of interdependent modules, but some particularly thorny cases remain.
 
-Now it seems that they succeded in doing the job. It resulted in creating 91 modules. They're located in your $JAVA_HOME/jmods directory:
+Now it seems that they succeded in doing the job. It resulted in creating 91 modules. They're located in your `$JAVA_HOME/jmods` directory:
 
 ```
 ~$ ls -l $JAVA_HOME/jmods
 ```
 
-The modules are fully independent and isolated from each other. Each one has it's interface that is exposed for other modules. Developers can now compile, package, deploy and execute applications that consists only of the selected modules and nothing else. This is a big thing. There is also no need for rt.jar (java runtime jar) prepared for us - we create the runtime by ourselves by linking modules. Let's see how can we do this and what do we gain by that.
+
+The modules are fully independent and isolated from each other. Each one has it's interface that is exposed for other modules. Developers can now compile, package, deploy and execute applications that consists only of the selected modules and nothing else. This is a big thing.
 
 ## Getting modular
 
-If Java itself is modular and there are means to make our own code modular then we should do it right now. Let's explain the basics on a simple java application. 
-
-
-What we're going to build is a simple application made of two modules:
+If Java itself is modular and there are means to make our own code modular then we should do it right now. Let's explain the basics on a simple Java application made of two modules:
 	
-1. com.timeteller.clock 
-2. com.timeteller.main
+1. com.timeteller.clock: a module which contains SpeakingClock - a class for printing current time to the stdout.
+2. com.timeteller.main: a module utilizing the functionality offered by com.timeteller.clock module.
+
+The code, building and running instructions are located here (TODO: LINK TO THE CODE)
 
 Project structure:
 
-![project structure](ProjectStructure.png "Demo project structure") 
+![project structure](ProjectStructure.png "Demo project structure")
 
 
+Classes Main.java and SpeakingClock.java are almost irrelevant regarding to modules. Jigsaw does not make them any different from previous java implementations. All we have to know that the _main_ method uses the SpeakingClock's method: 
+
+```
+public static void main (String[] args) {
+    SpeakingClock clock = new SpeakingClock();
+    clock.tellTheTime(); // displays the time to stdout.
+}
+```
+
+The most important part is hidden in the module descriptor files (module-info.java). They contain all the module metadata. The're plain java files, like this:
+
+```
+module com.timeteller.clock {
+  exports com.timeteller.clock;
+}
+
+```
+or this:
+
+```
+module com.timeteller.main {
+  requires com.timeteller.clock;
+}
+
+```
+
+This is a trivial module configuration but you can learn the following from it:
+
+- module descriptor files by convention are placed in the root folder of the module	 
+- every module has a unique name
+- module descriptors define what packages are _exported_ from the module and what modules do they _require_
+
+The last bullet is strictly about the isolation I mentioned earlier. If you do not export your packages, they will remain hidden in your module, unavailable to other modules. Analogically with requiring. If something is exported that does not mean that you can use it everywhere. You have to explicitly require it (except with the java.base module - for convinience every module automatically requires it). If you won't do the above, the application won't even compile.
+
+Last thing to notice here is that _public_ changes it's meaning in java 9. Before modules, it meant that a public code is visible everywhere. Now it means that the code is not visible unless the package that has it is exported.
+	
+## Tailor-made runtime (size)
+
+Jigsaw is not about modules only. 
 
 
-
-
-- java.base is allways there
-- module has a name
-- module tells what it provides (exports)
-	If you do not export stuff, it's gonna be UNAVAILABLE. 
-
-
-- module tells what it needs (requires)
-	If something is exported that does not mean that you can use it. You have to require it.
-
-
-
-
-
-
-- what structure has java right now? 
-- what structure will it have after splitting
-- lack of clarity on dependencies
-- public is too open
-## 2. Tailor-made runtime (size)
 (show how to use jlink to create your own runtime)
 - large jars, large rt.jar
+
+
+There is also no need for rt.jar (java runtime jar) prepared for us - we create the runtime by ourselves by linking modules. 
 
 
 (show module creation etc)
@@ -76,8 +97,6 @@ Project structure:
 ## 4. Increased security and performance
 (try to invoke code on your java app)
 
-## 5. Jar hell solutions
-Do i want to talk about it??
 
 ## 6. Caveats??
  - show how to check if apis are inaccessible?
