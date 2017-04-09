@@ -25,8 +25,7 @@ $ jar -c -f jars/timeTeller.jar --main-class com.lukasz.main.Main -c build/class
 Running the jar:
 
 ```
-$ cd jars
-$ java -p . -m com.lukasz.main
+$ java -p jars -m com.lukasz.main
 
 ```
 
