@@ -7,7 +7,7 @@ Modularity is quite a known concept in software engineering. Writing unique unit
  - make our design cleaner and easier to maintain
  - choose what tools to use in a more concious way
  - make our application smaller because we avoid using unnecessary things
- - make it safer because it does not contain things potentially dangerous to our application
+ - make it safer because it does not contain elements potentially dangerous to our application
  - possibly make it more scalable and improve performance
 
 Java creators certainly know that. That's why there's [Jigsaw](http://openjdk.java.net/projects/jigsaw/). It is a huge project started at Sun way back in August 2008. Delayed due to technical and non-technical reasons (eg. integrating Sun into Oracle) it's finally there to make Java modular. Encompassing 6 JEPs, it will be a part of Java 9 release which is planned to happen in about 100 days. 
@@ -16,16 +16,19 @@ Java creators certainly know that. That's why there's [Jigsaw](http://openjdk.ja
 
 As we take a look at Java Platform and the JDK we are probably not satisfied about it's structure. This is not a suprise - over the years Java was designed without mechanisms that enforced modular design. The spirit of always being backwards compatible didn't help either. Every release has just made the it bigger and more tangled. No wonder the primary goal of the Jigsaw project was to cut the Java Platform and the JDK into smaller and more organized modules.
 
-This job was a tough one. After the decision about defering Project Jigsaw from Java 8 to Java 9 in 2012, Mark Reinhold explained why it was so hard:
+This job was a tough one. After the decision about defering Project Jigsaw from Java 8 to Java 9 in 2012, Mark Reinhold, the Chief Architect of the Java Platform Group at Oracle explained why it was so hard:
 
 >There are two main reasons. The first is that the JDK code base is deeply interconnected at both the API and the implementation levels, having been built over many years primarily in the style of a monolithic software system. We’ve spent considerable effort eliminating or at least simplifying as many API and implementation dependences as possible, so that both the Platform and its implementations can be presented as a coherent set of interdependent modules, but some particularly thorny cases remain.
+>
+>We want to maintain as much compatibility with prior releases as possible, most especially for existing classpath-based applications but also, to the extent feasible, for applications composed of modules.
+
 
 (CZY MAM DOSTARCZYĆ LINK DO CYTATU?)
 
 Now it seems that they succeded in doing the job. It resulted in creating 91 modules. They're located in your `$JAVA_HOME/jmods` directory:
 
 ```
-~$ ls -l $JAVA_HOME/jmods
+$ ls -l $JAVA_HOME/jmods
 ```
 
 
@@ -62,7 +65,7 @@ $ tree
 8 directories, 5 files
 ```
 
-Classes Main.java and SpeakingClock.java are almost irrelevant regarding to modules. Jigsaw does not make them any different from previous java implementations. All we have to know that the _main()_ method uses the SpeakingClock's method: 
+Classes Main.java and SpeakingClock.java are almost irrelevant when it comes to talking about modules. Jigsaw does not make them any different from previous java implementations. All we have to know that the _main()_ method uses the SpeakingClock's method from the other module: 
 
 ```
 public static void main (String[] args) {
@@ -88,15 +91,15 @@ module com.timeteller.main {
 
 ```
 
-It is a trivial module configuration but you can learn the following from it:
+It is a trivial configuration but you can learn the following from it:
 
 - module descriptor files by convention are placed in the root folder of the module	 
 - every module has a unique name
 - module descriptors define what packages are _exported_ from the module and what modules do they _require_
 
-The last bullet is strictly about the isolation I mentioned earlier. If you do not export your packages, they will remain hidden in your module, unavailable to other modules. Analogically with requiring. If something is exported that does not mean that you can use it everywhere. You have to explicitly require it (except with the java.base module - for convinience every module automatically requires it). If you won't do the above, the application won't even compile.
+The last bullet is strictly about the encapsulation I mentioned earlier. If you do not export your packages, they will remain hidden in your module -  unavailable to other modules. Analogically with requiring. If something is exported that doesn't mean that you can use it everywhere. You have to explicitly require it (except with the java.base module - for convinience every module automatically requires it). If you won't do the above, the application won't even compile.
 
-Let's notice that _public_ keyword changes it's meaning in java 9. Before modules, it meant that a public code is visible everywhere. Now it means that the code is not visible unless the package is exported. It's a good thing - this gives the possibility for hiding internal APIs so that no other module could use it somewhere else. 
+Let's notice that the _public_ keyword changes it's meaning in java 9. Before modules, it meant that a public code is visible everywhere. Now it means that the code is not visible outside the module if the package is not exported. It's a good thing - this gives the possibility for hiding internal APIs so that no other module could use it somewhere else. 
 	
 
 ## Building the timeteller app
@@ -114,61 +117,47 @@ $ mkdir -p build/classes/com.timeteller.main
 $ javac -d build/classes/com.timeteller.main/ --module-path=jars com.timeteller.main/module-info.java com.timeteller.main/com/timeteller/main/Main.java
 $ jar -c -f jars/timeTeller.jar --main-class com.timeteller.main.Main -C build/classes/com.timeteller.main .
 
-
 ```
 
-The module path is a place where the java compiler looks for modules. To let it know about the modules we must place them on it. It's a concept simillar to classpath but for modules. When we build the `com.timeteller.main` module we put a jar with `com.timeteller.clock` on the modulepath. Otherwise it does not find the necessary code and results in a compilation error:
+The module path is a place where the java compiler looks for modules. To let it know about the modules we must place them on it. It's a concept simillar to classpath but for modules. When we build the `com.timeteller.main` module we put a jar with `com.timeteller.clock` on the module path. Otherwise it doesn't find the necessary code and results in a compilation error:
 
 ```
-$ javac -d build/classes/com.timeteller.main/  com.timeteller.main/module-info.java com.timeteller.main/com/timeteller/main/Main.java
+$ javac -d build/classes/com.timeteller.main/ com.timeteller.main/module-info.java com.timeteller.main/com/timeteller/main/Main.java
 com.timeteller.main/module-info.java:2: error: module not found: com.timeteller.clock
   requires com.timeteller.clock;
                          ^
 1 error
 ```
 
-Last thing to consider here is the fact that the JARs we created here are modular. Modular JAR files are just like the regular JARs except that they include module-info.class file (compiled module descriptor). This way they can be put either on modulepath or classpath.
+Last thing to consider here is the fact that the JARs we created here are modular too. They are just like the regular JARs except that they include module-info.class file (compiled module descriptor). This way they can be put both on modulepath and classpath.
 
 ## Tailor-made runtime
 
-Project Jigsaw will equip Java 9 in many more useful things. Among them is [The Java Linker](http://openjdk.java.net/jeps/282) tool which can be used to link a set of modules with their dependencies and create a custom run-time image. The image does not contain anything that our application doesn't need. This has two serious advantages:
+Project Jigsaw will equip Java 9 in many more useful things. Among them is [The Java Linker](http://openjdk.java.net/jeps/282) tool which can be used to link a set of modules with their dependencies and create a custom run-time image. Instead of using the whole runtime (the 51 MB rt.jar file) containing all modules we can use our own runtime not containing anything that our application doesn't need. This has two serious advantages:
 
-- the size of the application decreases
+- the size of the run-time decreases
 - the security of our aplication increases
 
-This is how it can be done (based on the example code). Below we specify the modulepath, the modules we want to pick and the output directory for the runtime:
+Let's try this. Below we specify the modulepath, the modules we want to pick and the output directory for our runtime:
 
 ```
-jlink --module-path $JAVA_HOME/jmods:mlib:jars  --add-modules com.timeteller.main --output timeteller-runtime
+jlink --module-path $JAVA_HOME/jmods:mlib:jars --add-modules com.timeteller.main --output timeteller-runtime
 ```
 
-Calling the above creates `timeteller-runtime`. For our (very basic) example it is super small (272 Bytes) and is sufficient to run the timeteller application, like this:
+Calling the above creates `timeteller-runtime`. For our (very basic) example it's size is 35 MB and is sufficient to run the timeteller application, like this:
 
 ```
-$ timeteller-runtime/bin/java  --module-path jars/ -m com.timeteller.main
+$ timeteller-runtime/bin/java --module-path jars/ -m com.timeteller.main
 Sun Apr 09 18:31:16 CEST 2017
 
 ```
 
-We can check the modules included in the image the following way:
+Finally, there are ways to make it even smaller (21 MB) by using additional flags:
 
 ```
-$ timeteller-runtime/bin/java --list-modules
-com.timeteller.clock
-com.timeteller.main
-java.base@9-ea
+jlink --module-path $JAVA_HOME/jmods:mlib:jars --add-modules com.timeteller.main --output timeteller-runtime-compressed --compress=2 --strip-debug
 ```
 
 ## Summary
 
-
- - show how to check if apis are inaccessible?
- - how to find out if i'm ready for migration?
- 
-
-
-
-
-
-
-
+Modularisation of the Java Platform and the JDK introduced by project Jigsaw looks quite promising for Java itself. Indeed, external tools will need to adopt to the new module system, because of the new way of building applications. Hopefully they will utilize the potential that Jigsaw brings to Java 9 and make working with modules easy and pleasant. 
