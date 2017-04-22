@@ -129,7 +129,7 @@ Notice that the JARs we created here are modular too. They are just like the reg
 
 ## Tailor made run-time images
 
-Project Jigsaw will equip Java 9 in some other useful things. Among them is [The Java Linker](http://openjdk.java.net/jeps/282) - an experimental tool which can be used to take only needed modules and create a custom run-time image. Instead of using the whole java run-time (the 51 MB rt.jar) we can create our own "tailor made" one:
+Project Jigsaw will equip Java 9 in some other useful things. Among them is [The Java Linker](http://openjdk.java.net/jeps/282) - a tool which can be used to take only needed modules and create a custom run-time image. Instead of using the whole java run-time (the 51 MB rt.jar) we can create our own "tailor made" one:
 
 ```
 $ jlink --module-path $JAVA_HOME/jmods:mlib:jars --add-modules com.timeteller.main --output timeteller-runtime
