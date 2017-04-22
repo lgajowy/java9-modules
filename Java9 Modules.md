@@ -29,13 +29,13 @@ Now it seems that they succeded in doing the job. All Java 9 modules are located
 $ ls -l $JAVA_HOME/jmods
 ```
 
-The modules are isolated from each other. Each one has it's interface that is exposed to other modules. They _require_ each other and communicate only through _exported_ packages. Developers can compile, package, deploy and execute applications that consist only of the selected modules and nothing else.
+Each module has it's interface that is exposed to other modules. They _require_ each other and communicate only through _exported_ packages. Developers can compile, package, deploy and execute applications that consist only of the selected modules and nothing else. This is a huge change.
 
 ## Getting modular
 
 There will be means to make our own code modular too. Let's explain the basics on a simple Java application made of two modules:
 	
-1. com.timeteller.clock: a module which contains SpeakingClock - simple class for printing current time to the stdout.
+1. com.timeteller.clock: a module which contains _SpeakingClock_ - simple class for printing current time to the stdout.
 2. com.timeteller.main: a module utilizing the functionality offered by com.timeteller.clock module.
 
 The code, building and running instructions are located here 
@@ -62,7 +62,7 @@ $ tree
 8 directories, 5 files
 ```
 
-Classes Main.java and SpeakingClock.java are almost irrelevant when it comes to talking about modules. Jigsaw does not make them any different from previous java implementations. All we have to know that the _main()_ method uses the SpeakingClock's method from the other module: 
+Classes _Main_ and _SpeakingClock_ are almost irrelevant when it comes to talking about modules. Jigsaw does not make them any different from previous java implementations. All we have to know that the _main()_ method in the _Main_ class uses the _SpeakingClock's_ method from the other module: 
 
 ```
 public static void main (String[] args) {
@@ -96,7 +96,7 @@ It is a trivial configuration but you can learn the following from it:
 
 The last bullet is strictly about the encapsulation I mentioned earlier. If you do not export your packages, they will remain hidden in your module -  unavailable to other modules. Analogically with requiring. If something is exported that doesn't mean that you can use it everywhere. You have to explicitly require it (except with the java.base module - for convinience every module automatically requires it). If you won't do the above, the application won't even compile.
 
-Let's also notice that the _public_ keyword changes it's meaning in java 9. Before modules, it meant that a public code is visible everywhere. Now it means that the code is not visible outside the module if the package is not exported. It's a good thing - this gives the possibility for hiding internal APIs. This is also one of the goals of project Jigsaw described in [JEP 260] (http://openjdk.java.net/jeps/260). It's also a source of fear of many developers - some APIs simply get hidden wich may introduce complications while migrating to Java 9.
+Let's also notice that the _public_ keyword changes it's meaning in java 9. Before modules, it meant that a public code is visible everywhere. Now it means that the code is not visible outside the module if the package is not exported. It's a good thing - this gives the possibility for hiding internal APIs. This is also one of the goals of project Jigsaw described in [JEP 260] (http://openjdk.java.net/jeps/260). It's also a source of fear of many developers - some APIs, eg. from _sun.misc_ package get hidden what may introduce complications while migrating to Java 9.
 
 ### Building the app
 	
@@ -153,7 +153,7 @@ The `--compress` flag enables compression of resources on three different levels
 
 ## Summary
 
-Java Platform Module System with modularized JDK and the Java platform itself is a huge, long awaited change that is finally going to be there in the upcomming release. In this post we shortly described it and showed jlink tool as a "cherry on the top". 
+Java Platform Module System with modularized JDK and the Java platform itself is a long awaited change that is finally going to be there in the upcomming release. In this post we shortly described it and showed _jlink_ tool as a "cherry on the top". 
 
 If you're concerned about any problems that may appear while migrating your software to Java 9, there is a [guide](https://docs.oracle.com/javase/9/migrate/toc.htm#JSMIG-GUID-7744EF96-5899-4FB2-B34E-86D49B2E89B6) straight from Oracle. They strongly encourage developers to try it as soon as possible due to possible incompatibilities. 
 
