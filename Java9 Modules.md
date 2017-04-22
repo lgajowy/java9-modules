@@ -96,7 +96,7 @@ It is a trivial configuration but you can learn the following from it:
 
 The last bullet is strictly about the encapsulation I mentioned earlier. If you do not export your packages, they will remain hidden in your module -  unavailable to other modules. Analogically with requiring. If something is exported that doesn't mean that you can use it everywhere. You have to explicitly require it (except with the java.base module - for convinience every module automatically requires it). If you won't do the above, the application won't even compile.
 
-Let's also notice that the _public_ keyword changes it's meaning in java 9. Before modules, it meant that a public code is visible everywhere. Now it means that the code is not visible outside the module if the package is not exported. It's a good thing - this gives the possibility for hiding internal APIs. This is also one of the goals of project Jigsaw described in [JEP 260] (http://openjdk.java.net/jeps/260). 
+Let's also notice that the _public_ keyword changes it's meaning in java 9. Before modules, it meant that a public code is visible everywhere. Now it means that the code is not visible outside the module if the package is not exported. It's a good thing - this gives the possibility for hiding internal APIs. This is also one of the goals of project Jigsaw described in [JEP 260] (http://openjdk.java.net/jeps/260). It's also a source of fear of many developers - some APIs simply get hidden wich may introduce complications while migrating to Java 9.
 
 ### Building the app
 	
@@ -153,4 +153,10 @@ The `--compress` flag enables compression of resources on three different levels
 
 ## Summary
 
-Java Platform Module System with modularized JDK and the Java platform itself is a long awaited thing that is finally going to be there in the upcomming release. In this post we shortly described it and showed jlink tool as a 'cherry on top'. What we did not describe are the controversies and criticism about it comming mainly from OSGi creators. If you're interested in the topic, there is an [article](https://developer.jboss.org/blogs/scott.stark/2017/04/14/critical-deficiencies-in-jigsawjsr-376-java-platform-module-system-ec-member-concerns) worth reading to see how the things are in a more broad way. 
+Java Platform Module System with modularized JDK and the Java platform itself is a huge, long awaited change that is finally going to be there in the upcomming release. In this post we shortly described it and showed jlink tool as a "cherry on the top". 
+
+If you're concerned about any problems that may appear while migrating your software to Java 9, there is a [guide](https://docs.oracle.com/javase/9/migrate/toc.htm#JSMIG-GUID-7744EF96-5899-4FB2-B34E-86D49B2E89B6) straight from Oracle. They strongly encourage developers to try it as soon as possible due to possible incompatibilities. 
+
+We are looking forward to see how the Module System is going to adopt in the world of Java software. 
+
+
