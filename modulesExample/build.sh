@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -r build jars
+rm -r build jars 2> /dev/null
 
 mkdir -p jars
 
